@@ -14,7 +14,7 @@ module.exports = {
 
   langs: {
     en: {
-      current: "OFFICIAL GITHUB FORK \n\n  🔗 Link: %1\n ⏯️ TUTORIAL https://youtu.be/_Qb7Pq0Xavs?si=-MaOtPPnBPVSbIFX\n\n╰───────『 ✨ 』───────╯"
+      current: "𝚝𝚘𝚍𝚎𝚛 𝚔𝚗 𝚍𝚎𝚋𝚘 𝚏𝚘𝚛𝚔╰───────『 ✨ 』───────╯"
     }
   },
 
