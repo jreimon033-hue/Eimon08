@@ -78,7 +78,7 @@ module.exports = {
 `╭─✨ SYSTEM GOAT ✨─╮
 │ 🤖 Bot : Activated
 │ 🔗 Prefix : ${prefix}
-│ ⚡ Owner : 𝐌𝐀𝐌𝐔𝐍
+│ ⚡ Owner : 🅰︎🆂︎🅷︎🅸︎🅺︎
 │ ⏰ Date/Time : ${dateTime} 
 ╰─✅ Access Granted─╯`,
         targetThreadID
