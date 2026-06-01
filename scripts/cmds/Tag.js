@@ -1,84 +1,104 @@
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+// 🔥 global control variable
+global.tagStop = false;
+
 module.exports = {
   config: {
     name: "tag",
-    aliases: ["all", "everyone"],
     category: "GROUP",
-    role: 0,
-    author: "xalman",
-    countDown: 3,
+    role: 2,
+    author: "ashik",
+    countDown: 5,
     description: {
-      en: "Tag by reply, name or tag all members"
-    },
-    guide: {
-      en: "{pm}tag [name] [msg]\n{pm}tag all [msg]\nReply + {pm}tag [msg]"
+      en: "Tag system with stop command + delay"
     }
   },
 
-  onStart: async ({ api, event, usersData, threadsData, args }) => {
-    const { threadID, messageID, messageReply } = event;
+  onStart: async ({ api, event, args, threadsData, usersData }) => {
+    const { threadID, messageID, messageReply, mentions } = event;
 
     try {
-      const threadData = await threadsData.get(threadID);
 
-      const members = threadData.members
-        .filter(m => m.inGroup === true)
-        .map(m => ({
-          name: m.name,
-          id: m.userID
-        }));
-
-      let tagUsers = [];
-      let text = "";
-      
-      if (messageReply) {
-        const uid = messageReply.senderID;
-        const name = await usersData.getName(uid);
-        tagUsers.push({ name, id: uid });
-        text = args.join(" ");
+      // 🔴 STOP COMMAND
+      if (args[0]?.toLowerCase() === "stop") {
+        global.tagStop = true;
+        return api.sendMessage("🛑 Tag system stopped!", threadID, messageID);
       }
 
-      else if (args[0] && ["all", "cdi"].includes(args[0].toLowerCase())) {
-        tagUsers = members;
-        text = args.slice(1).join(" ");
+      // 🟢 START RESET
+      global.tagStop = false;
+
+      let count = parseInt(args.find(a => !isNaN(a))) || 1;
+      if (count > 30) count = 30;
+      if (count < 1) count = 1;
+
+      const text = args.filter(a => isNaN(a) && a.toLowerCase() !== "@everyone").join(" ")
+        || "🔥 tagged you";
+
+      const threadData = await threadsData.get(threadID);
+      const members = threadData.members || [];
+
+      let tagUsers = [];
+
+      // 🔥 @everyone
+      if (args[0]?.toLowerCase() === "@everyone") {
+        tagUsers = members.map(m => ({
+          id: m.userID,
+          name: m.name
+        }));
+      }
+
+      // 🔥 mention
+      else if (mentions && Object.keys(mentions).length > 0) {
+        tagUsers = Object.keys(mentions).map(uid => ({
+          id: uid,
+          name: mentions[uid]
+        }));
+      }
+
+      // 🔥 reply
+      else if (messageReply) {
+        const uid = messageReply.senderID;
+        const name = await usersData.getName(uid);
+        tagUsers = [{ id: uid, name }];
       }
 
       else {
-        if (!args[0]) {
-          return api.sendMessage(
-            "⚠️ Name / reply / tag all",
-            threadID,
-            messageID
-          );
-        }
-
-        const searchName = args[0].toLowerCase();
-        text = args.slice(1).join(" ");
-
-        tagUsers = members.filter(m =>
-          m.name.toLowerCase().includes(searchName)
+        return api.sendMessage(
+          "⚠️ Use @user / @everyone / reply / stop",
+          threadID,
+          messageID
         );
-
-        if (tagUsers.length === 0) {
-          return api.sendMessage("❌ User Not Found", threadID, messageID);
-        }
       }
 
-      const mentions = tagUsers.map(u => ({
-        tag: u.name,
-        id: u.id
-      }));
+      // 🚀 LOOP WITH STOP + DELAY
+      for (let i = 0; i < count; i++) {
 
-      const namesText = tagUsers.map(u => u.name).join(", ");
-      const body = text ? `${namesText}\n${text}` : namesText;
+        // 🔴 STOP CHECK
+        if (global.tagStop) {
+          global.tagStop = false;
+          return api.sendMessage("🛑 Tag stopped successfully!", threadID);
+        }
 
-      api.sendMessage(
-        { body, mentions },
-        threadID,
-        messageReply ? messageReply.messageID : messageID
-      );
+        const u = tagUsers[i % tagUsers.length];
+
+        await api.sendMessage(
+          {
+            body: `${text} (${i + 1})`,
+            mentions: [{
+              id: u.id,
+              tag: u.name
+            }]
+          },
+          threadID
+        );
+
+        await sleep(1500); // 1.5 sec delay
+      }
 
     } catch (err) {
-      api.sendMessage("❌ Error: " + err.message, threadID, messageID);
+      return api.sendMessage("❌ Error: " + err.message, threadID, messageID);
     }
   }
 };
