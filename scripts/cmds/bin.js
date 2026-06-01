@@ -6,58 +6,73 @@ module.exports = {
   config: {
     name: "pastebin",
     aliases: ["bin"],
-    version: "1.4",
-    author: "NeoKEX", // Don't try to change the author name otherwise I'll fvckyourmom
+    version: "2.0",
+    author: "NeoKEX",
     countDown: 5,
     role: 0,
-    shortDescription: "Upload a command's code to Pastebin.",
-    longDescription: "Uploads the raw source code of any command to a Pastebin service and returns the raw link.",
+    shortDescription: "Upload command source code",
+    longDescription: "Upload a command file to pastebin service",
     category: "utility",
-    guide: "{pn} <commandName}"
+    guide: "{pn} <commandName>"
   },
 
-  onStart: async function ({ api, event, args, message }) {
-    // Copyright: NeoKEX
-    const encodedAuthor = 'TmVvS0VY'; 
-    const correctAuthor = Buffer.from(encodedAuthor, 'base64').toString('utf8');
-
-    if (this.config.author !== correctAuthor) {
-      return message.reply("❌ | The author name has been changed. This command will not work.");
-    }
-
-    const cmdName = args[0];
-    if (!cmdName) {
-      return message.reply("❌ | Please provide the command name to upload.");
-    }
-
-    const cmdPath = path.join(__dirname, `${cmdName}.js`);
-
-    if (!fs.existsSync(cmdPath) || !cmdPath.startsWith(__dirname)) {
-      return message.reply(`❌ | Command "${cmdName}" not found in this folder.`);
-    }
-
+  onStart: async function ({ args, message }) {
     try {
+      const cmdName = args[0];
+
+      if (!cmdName) {
+        return message.reply("❌ | Usage: /bin <commandName>");
+      }
+
+      const cmdPath = path.join(__dirname, `${cmdName}.js`);
+
+      if (!fs.existsSync(cmdPath)) {
+        const files = fs.readdirSync(__dirname)
+          .filter(f => f.endsWith(".js"))
+          .join("\n");
+
+        return message.reply(
+          `❌ File not found!\n\nLooking for:\n${cmdPath}\n\nAvailable files:\n${files}`
+        );
+      }
+
       const code = fs.readFileSync(cmdPath, "utf8");
-      
-      const encodedApiKey = 'aHR0cHM6Ly9hcnlhbmFwaS51cC5yYWlsd2F5LmFwcC9hcGkvcGFzdGViaW4=';
-      const apiUrl = Buffer.from(encodedApiKey, 'base64').toString('utf8');
+
+      if (!code || code.trim().length === 0) {
+        return message.reply("❌ | File is empty.");
+      }
+
+      const apiUrl = Buffer.from(
+        "aHR0cHM6Ly9hcnlhbmFwaS51cC5yYWlsd2F5LmFwcC9hcGkvcGFzdGViaW4=",
+        "base64"
+      ).toString("utf8");
 
       const response = await axios.get(apiUrl, {
         params: {
           content: code,
-          title: `${cmdName}.js source code`
-        }
+          title: `${cmdName}.js`
+        },
+        timeout: 30000
       });
 
-      const { status, raw } = response.data;
-      if (status === 0 && raw) {
-        return message.reply(`✅ | Raw source code link for "${cmdName}.js":\n🔗 Raw Link: ${raw}`);
-      } else {
-        return message.reply(`❌ | Failed to upload content to Pastebin. Please try again later.`);
+      if (
+        response.data &&
+        response.data.status === 0 &&
+        response.data.raw
+      ) {
+        return message.reply(
+          `✅ Upload Successful!\n\n🔗 ${response.data.raw}`
+        );
       }
-    } catch (error) {
-      console.error(error);
-      return message.reply("❌ | An error occurred while trying to read and upload the command file.");
+
+      return message.reply(
+        `❌ Upload failed.\n\nResponse:\n${JSON.stringify(response.data, null, 2)}`
+      );
+
+    } catch (err) {
+      return message.reply(
+        `❌ Error:\n${err.message}`
+      );
     }
   }
 };
