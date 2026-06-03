@@ -9,7 +9,7 @@ module.exports = {
     version: "2.3",
     author: "ARIJIT × Ere'rious", // Don't change author name
     countDown: 5,
-    role: 0,
+    role: 2,
     usePrefix: true,
     shortDescription: "Expose someone as a Goru!",
     longDescription: "Puts the tagged/replied user's face on a cow's body (fun meme)",
