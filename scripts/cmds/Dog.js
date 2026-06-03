@@ -10,7 +10,7 @@ module.exports = {
         version: "3.0.0",
         author: "xalman",
         countDown: 5,
-        role: 0,
+        role: 2,
         shortDescription: { en: "Convert someone into a dog" },
         longDescription: { en: "Put user's profile picture on a dog image using canvas" },
         category: "fun",
