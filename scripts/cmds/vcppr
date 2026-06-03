@@ -1,0 +1,41 @@
+module.exports = {
+  config: {
+    name: "vcppr",
+    version: "1.0",
+    author: "ashik",
+    role: 0,
+    description: "VCPP Help Menu",
+    category: "image"
+  },
+
+  onStart: async function ({ api, event }) {
+    const msg =
+`╭──────── VCPP HELP ────────╮
+
+🖼 COMMAND:
+Reply a photo and use:
+
+/vcpp <color> <upper> , <down> , <gc name>
+
+───────────────────────────
+
+📌 EXAMPLE:
+
+/vcpp yellow XAIKO , SIYAM , KO KING TOP VOICE G
+
+───────────────────────────
+
+🎨 COLORS:
+yellow, red, blue, green, purple, black
+
+───────────────────────────
+
+📸 REQUIREMENT:
+✔ Must reply a photo
+✔ Image will be used as center DP
+
+╰───────────────────────────╯`;
+
+    return api.sendMessage(msg, event.threadID, event.messageID);
+  }
+    };
