@@ -4,22 +4,38 @@ module.exports = {
     version: "1.0",
     author: "ashik",
     role: 0,
-    description: "Help menu"
+    description: "VCPP command help menu",
+    category: "image"
   },
 
   onStart: async function ({ api, event }) {
-    return api.sendMessage(
-`╭── VCPP ESPORTS ──╮
+    const msg = `
+╭━━━🔥 VCPP ESPORTS GUIDE 🔥━━━╮
 
-Reply photo + use:
-/vcpp color ITS NAME , DOWN , GC
+📌 HOW TO USE:
+/vcpp XAIKO | SIYAM | KO KING TOP VOICE G
 
-Example:
-/vcpp yellow ITS XAIKO , SIYAM , KO KING TOP VOICE G
+📌 HOW IT WORKS:
+• Reply a photo
+• Bot will put your image in center circle
+• Top name = XAIKO
+• Bottom name = SIYAM
+• Group name = KO KING TOP VOICE G
 
-╰────────────────╯`,
-      event.threadID,
-      event.messageID
-    );
+📌 EXAMPLE:
+Reply photo
+/vcpp XAIKO | SIYAM | KO KING TOP VOICE G
+
+📌 FEATURES:
+✔ Full esports banner
+✔ Neon glow ring
+✔ Custom background
+✔ Circular frame fit
+✔ No empty space
+
+╰━━━━━━━━━━━━━━━━━━━━━━╯
+`;
+
+    return api.sendMessage(msg, event.threadID, event.messageID);
   }
 };
