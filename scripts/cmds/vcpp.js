@@ -3,157 +3,142 @@ const path = require("path");
 const axios = require("axios");
 const { createCanvas, loadImage } = require("canvas");
 
-// LOGOS
-const LION = "https://i.imgur.com/6K0Gk79.gif";
-const SKULL = "https://i.imgur.com/C7OUGdj.gif";
+const BG = "https://i.imgur.com/gz32W84.jpeg";
 
 module.exports = {
   config: {
     name: "vcpp",
-    version: "3.0",
+    version: "5.0",
     author: "ashik",
-    countDown: 5,
     role: 0,
-    description: "Ultra esports vcpp banner",
+    countDown: 5,
     category: "image",
-    guide: {
-      en: "Reply a photo\n/vcpp color ITS NAME , DOWN , GC"
-    }
+    description: "Pro esports banner generator"
   },
 
   onStart: async function ({ api, event, args }) {
     const { threadID, messageID, messageReply } = event;
 
     if (!messageReply || !messageReply.attachments?.[0]) {
-      return api.sendMessage("❌ Reply a photo first!", threadID, messageID);
+      return api.sendMessage("❌ Reply to a photo first!", threadID, messageID);
     }
 
     if (!args.length) {
-      return api.sendMessage("❌ Use /vcppr for help", threadID, messageID);
+      return api.sendMessage("❌ Use: /vcpp XAIKO | SIYAM | KO KING TOP VOICE G", threadID, messageID);
     }
 
     try {
-      const color = args[0];
-      const text = args.slice(1).join(" ");
-      let [its, top, down, gc] = text.split(",").map(x => x?.trim());
+      const input = args.join(" ").split("|").map(e => e.trim());
+      const upName = input[0] || "XAIKO";
+      const downName = input[1] || "SIYAM";
+      const groupName = input[2] || "KO KING TOP VOICE G";
 
+      // USER IMAGE
       const imgURL = messageReply.attachments[0].url;
-      const imgData = await axios.get(imgURL, { responseType: "arraybuffer" });
-      const avatar = await loadImage(imgData.data);
+      const img = await axios.get(imgURL, { responseType: "arraybuffer" });
+      const avatar = await loadImage(img.data);
 
-      const lion = await loadImage(LION);
-      const skull = await loadImage(SKULL);
+      // BG IMAGE
+      const bgData = await axios.get(BG, { responseType: "arraybuffer" });
+      const bg = await loadImage(bgData.data);
 
       const canvas = createCanvas(1000, 1000);
       const ctx = canvas.getContext("2d");
 
-      // ================= ULTRA ESPORTS BACKGROUND =================
-      const bg = ctx.createLinearGradient(0, 0, 1000, 1000);
-      bg.addColorStop(0, "#05010a");
-      bg.addColorStop(0.3, "#12001f");
-      bg.addColorStop(0.6, "#001a1f");
-      bg.addColorStop(1, "#0a000f");
+      // ================= BACKGROUND ONLY =================
+      ctx.drawImage(bg, 0, 0, 1000, 1000);
 
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, 1000, 1000);
-
-      // glow particles
-      for (let i = 0; i < 25; i++) {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(0,255,255,${Math.random() * 0.08})`;
-        ctx.arc(Math.random() * 1000, Math.random() * 1000, Math.random() * 120, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // diagonal lines
-      ctx.strokeStyle = "rgba(255,0,255,0.08)";
-      ctx.lineWidth = 2;
-
-      for (let i = -1000; i < 2000; i += 80) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i + 400, 1000);
-        ctx.stroke();
-      }
-
-      // ================= LOGOS =================
-      ctx.drawImage(lion, 40, 80, 120, 120);
-      ctx.drawImage(skull, 840, 80, 120, 120);
-
-      // ================= TOP TEXT =================
-      ctx.shadowColor = "#00ffff";
+      // ================= TOP NAME =================
+      ctx.shadowColor = "#ffcc00";
       ctx.shadowBlur = 25;
-      ctx.fillStyle = "#00ffff";
-      ctx.font = "bold 70px Sans";
+      ctx.fillStyle = "#ffcc00";
+      ctx.font = "bold 85px Sans";
       ctx.textAlign = "center";
-      ctx.fillText((its || "ITS").toUpperCase(), 500, 120);
+      ctx.fillText(upName.toUpperCase(), 500, 110);
       ctx.shadowBlur = 0;
 
-      // ================= CENTER AVATAR =================
+      // ================= CENTER CIRCLE FRAME =================
       const x = 500;
       const y = 500;
-      const r = 200;
+      const r = 230;
 
-      // outer glow
+      // outer glow ring
       ctx.beginPath();
+      ctx.strokeStyle = "#00ffff";
+      ctx.lineWidth = 12;
       ctx.shadowColor = "#00ffff";
       ctx.shadowBlur = 30;
-      ctx.strokeStyle = "#00ffff";
-      ctx.lineWidth = 10;
       ctx.arc(x, y, r + 10, 0, Math.PI * 2);
       ctx.stroke();
 
-      // inner ring
       ctx.beginPath();
+      ctx.strokeStyle = "#ff00ff";
+      ctx.lineWidth = 6;
       ctx.shadowColor = "#ff00ff";
       ctx.shadowBlur = 20;
-      ctx.strokeStyle = "#ff00ff";
-      ctx.lineWidth = 5;
-      ctx.arc(x, y, r - 5, 0, Math.PI * 2);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.stroke();
 
-      // avatar clip
+      // clip PERFECT IMAGE FIT
       ctx.save();
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.clip();
+
+      // IMPORTANT: fill full circle (no gap)
       ctx.drawImage(avatar, x - r, y - r, r * 2, r * 2);
+
       ctx.restore();
 
-      // ================= BOTTOM TEXT =================
-      ctx.shadowBlur = 0;
-
+      // ================= CURVED GROUP NAME (FAKE STYLE) =================
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 55px Sans";
-      ctx.textAlign = "center";
-      ctx.fillText((top || "").toUpperCase(), 500, 780);
-
-      ctx.fillStyle = "#00ffff";
-      ctx.font = "bold 40px Sans";
-      ctx.fillText((down || "").toUpperCase(), 500, 850);
-
-      ctx.fillStyle = "#ff00ff";
       ctx.font = "bold 35px Sans";
-      ctx.fillText((gc || "").toUpperCase(), 500, 910);
+      ctx.shadowColor = "#000";
+      ctx.shadowBlur = 10;
+      ctx.textAlign = "center";
+
+      const letters = groupName.toUpperCase().split("");
+      const radius = 310;
+      const startAngle = -Math.PI / 2 - 0.6;
+
+      letters.forEach((letter, i) => {
+        const angle = startAngle + (i * 0.12);
+        const tx = 500 + radius * Math.cos(angle);
+        const ty = 500 + radius * Math.sin(angle);
+
+        ctx.save();
+        ctx.translate(tx, ty);
+        ctx.rotate(angle + Math.PI / 2);
+        ctx.fillText(letter, 0, 0);
+        ctx.restore();
+      });
+
+      // ================= BOTTOM NAME =================
+      ctx.shadowColor = "#00ffff";
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = "#00ffff";
+      ctx.font = "bold 75px Sans";
+      ctx.textAlign = "center";
+      ctx.fillText(downName.toUpperCase(), 500, 900);
 
       const buffer = canvas.toBuffer("image/png");
 
-      const filePath = path.join(__dirname, "vcpp.png");
-      fs.writeFileSync(filePath, buffer);
+      const file = path.join(__dirname, "vcpp.png");
+      fs.writeFileSync(file, buffer);
 
       return api.sendMessage(
         {
-          body: "🔥 ULTRA ESPORTS VCPP READY!",
-          attachment: fs.createReadStream(filePath)
+          body: "🔥 PRO ESPORTS VCPP READY",
+          attachment: fs.createReadStream(file)
         },
         threadID,
-        () => fs.unlinkSync(filePath),
+        () => fs.unlinkSync(file),
         messageID
       );
 
     } catch (e) {
       console.log(e);
-      return api.sendMessage("❌ Error generating VCPP", threadID, messageID);
+      return api.sendMessage("❌ Error generating image", threadID, messageID);
     }
   }
 };
