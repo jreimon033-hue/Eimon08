@@ -9,7 +9,7 @@ module.exports = {
     version: "1.1.7",
     author: "Milon Pro",
     countDown: 5,
-    role: 0,
+    role: 5,
     category: "fun",
     description: "Create a funny hijla image with an oval/face-shaped pfp.",
     guide: "{pn} @mention or reply"
