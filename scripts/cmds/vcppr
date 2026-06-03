@@ -4,38 +4,22 @@ module.exports = {
     version: "1.0",
     author: "ashik",
     role: 0,
-    description: "VCPP Help Menu",
-    category: "image"
+    description: "Help menu"
   },
 
   onStart: async function ({ api, event }) {
-    const msg =
-`╭──────── VCPP HELP ────────╮
+    return api.sendMessage(
+`╭── VCPP ESPORTS ──╮
 
-🖼 COMMAND:
-Reply a photo and use:
+Reply photo + use:
+/vcpp color ITS NAME , DOWN , GC
 
-/vcpp <color> <upper> , <down> , <gc name>
+Example:
+/vcpp yellow ITS XAIKO , SIYAM , KO KING TOP VOICE G
 
-───────────────────────────
-
-📌 EXAMPLE:
-
-/vcpp yellow XAIKO , SIYAM , KO KING TOP VOICE G
-
-───────────────────────────
-
-🎨 COLORS:
-yellow, red, blue, green, purple, black
-
-───────────────────────────
-
-📸 REQUIREMENT:
-✔ Must reply a photo
-✔ Image will be used as center DP
-
-╰───────────────────────────╯`;
-
-    return api.sendMessage(msg, event.threadID, event.messageID);
+╰────────────────╯`,
+      event.threadID,
+      event.messageID
+    );
   }
-    };
+};
