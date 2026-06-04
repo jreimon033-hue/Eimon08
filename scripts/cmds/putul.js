@@ -1,95 +1,84 @@
-module.exports.config = {
-  name: "putul",
-  version: "1.0.0",
-  hasPermssion: 0,
-  credits: "ashik",
-  author: "ashik",
-  role: 2,
-  description: "Cute couple love lines for Putul 💖",
-  commandCategory: "love",
-  usages: "/putul",
-  cooldowns: 5
-};
+module.exports = {
+  config: {
+    name: "putul",
+    version: "3.0",
+    author: "ashik",
+    countDown: 5,
+    role: 0,
+    description: "100+ romantic Putul lines with Ashik signature",
+    category: "love",
+    guide: { en: "{pn}" }
+  },
 
-module.exports.run = async function({ api, event }) {
+  onStart: async function ({ message }) {
 
-  const lines = [
-    "💖 Putul, tumi amar chotto ekta shukh er duniya.",
-    "🌸 Tumi chara amar din gulo shunno mone hoy.",
-    "💞 Putul, tumi amar heart er most beautiful chapter.",
-    "🥺 Tomar hasi dekhle mon ta shanti peye jay.",
-    "❤️ Ami chai tumi shob shomoy amar pashe thako.",
-    "🌙 Raat er chader moto tumi amar shopner alo.",
-    "✨ Putul, tumi amar life er sweetest addiction.",
-    "💘 Tomar kotha chara din ta incomplete lage.",
-    "🌸 Tumi amar chotto universe er queen.",
-    "💖 Ami tomay chara kichu imagine korte pari na.",
-    "🥰 Putul, tumi amar smile er main reason.",
-    "💞 Tomar voice amar jonno ekta comfort zone.",
-    "❤️ Tumi amar moner bhitore shobcheye special.",
-    "🌙 Raat e tomay niye onek shopno dekhi.",
-    "💘 Putul, tumi amar real happiness.",
-    "✨ Tomar presence amar life ke color dey.",
-    "💖 Ami chai tomay shob shomoy protect korte.",
-    "🌸 Tumi amar daily motivation.",
-    "🥺 Tomay na dekhle mon kharap hoye jay.",
-    "💞 Putul, tumi amar forever person.",
-    "❤️ Tumi amar shob emotions er center.",
-    "🌙 Tomar sathe kotha bolle shanti lage.",
-    "💘 Ami tomay onek beshi valobashi Putul.",
-    "✨ Tumi amar dream girl in real life.",
-    "💖 Tomar smile amar duniya.",
-    "🌸 Putul, tumi amar heartbeat.",
-    "🥰 Tomar sathe thaka mane happiness.",
-    "💞 Tumi chara ami incomplete.",
-    "❤️ Putul, tumi amar chirokaler bondhu o valobasha.",
-    "🌙 Tomay niye amar future imagine kori.",
-    "💘 Tumi amar shobcheye priyo manus.",
-    "✨ Putul, tumi amar life er light.",
-    "💖 Tomar jonno ami shob kichu korte pari.",
-    "🌸 Tumi amar moner sweetest corner.",
-    "🥺 Tomar ekta message amar din bhalo kore dey.",
-    "💞 Putul, tumi amar endless story.",
-    "❤️ Ami tomay harate chai na kokhono.",
-    "🌙 Tumi amar shob dream er reason.",
-    "💘 Putul, tumi amar perfect imperfection.",
-    "✨ Tomar sathe shob kichu special lage.",
-    "💖 Tumi amar life er best decision.",
-    "🌸 Putul, tumi amar forever love.",
-    "🥰 Tomar kotha vablei smile ashe.",
-    "💞 Tumi amar moner shobcheye close.",
-    "❤️ Ami tomay onek miss kori Putul.",
-    "🌙 Tumi amar shobcheye shundor feeling.",
-    "💘 Putul, tumi amar world.",
-    "✨ Tomar jonno ami always here.",
-    "💖 Tumi amar chirodin er valobasha.",
-    "🌸 Putul, tumi amar soulmate vibe.",
-    "🥰 Tomar sathe shob moment priceless.",
-    "💞 Tumi amar life er sweetest person.",
-    "❤️ Ami tomay niye future bani.",
-    "🌙 Putul, tumi amar dream reality.",
-    "💘 Tumi chara ami adhoora.",
-    "✨ Tomar smile amar oxygen.",
-    "💖 Putul, tumi amar everything.",
-    "🌸 Tumi amar heart er permanent guest.",
-    "🥺 Ami tomay onek care kori.",
-    "💞 Putul, tumi amar peace.",
-    "❤️ Tumi amar forever & always.",
-    "🌙 Tomar sathe life ta perfect.",
-    "💘 Putul, tumi amar jan.",
-    "✨ Tumi amar shob kichur uttor.",
-    "💖 Ami tomay chere jete pari na.",
-    "🌸 Putul, tumi amar duniya.",
-    "🥰 Tomar jonno ami always loyal.",
-    "💞 Tumi amar heart er owner.",
-    "❤️ Putul, tumi amar real love story."
-  ];
+    const lines = [
 
-  const pick = lines[Math.floor(Math.random() * lines.length)];
+      "💖 Putul তুমি আমার জীবনের সবচেয়ে সুন্দর অনুভূতি 🥰 | Ashik",
+      "🌸 Putul তোমার হাসি আমার শান্তি 💕 | Ashik",
+      "❤️ Putul তুমি না থাকলে সব ফাঁকা লাগে 😢 | Ashik",
+      "💞 Putul তুমি আমার পৃথিবীর আলো ✨ | Ashik",
+      "💘 Putul তোমাকে ছাড়া আমি কিছুই না 🥺 | Ashik",
+      "🌹 Putul তুমি আমার স্বপ্নের রানী 👑 | Ashik",
+      "💕 Putul তোমার কথা ভাবলেই মন ভালো হয়ে যায় 😍 | Ashik",
+      "💓 Putul তুমি আমার হৃদয়ের ধুকধুকানি ❤️ | Ashik",
+      "💗 Putul তুমি আমার প্রতিদিনের প্রার্থনা 🤲 | Ashik",
+      "💝 Putul তুমি আমার সুখের কারণ 🥰 | Ashik",
 
-  return api.sendMessage(
-    `💌 𝗖𝗼𝘂𝗽𝗹𝗲 𝗠𝗲𝘀𝘀𝗮𝗴𝗲 💌\n\n${pick}\n\n💖 - ashik`,
-    event.threadID,
-    event.messageID
-  );
+      "💖 Putul তুমি ছাড়া দিন শুরু হয় না ☀️ | Ashik",
+      "🌸 Putul তুমি আমার রাতের স্বপ্ন 🌙 | Ashik",
+      "❤️ Putul তুমি আমার জীবনের গল্প 📖 | Ashik",
+      "💞 Putul তুমি আমার সবকিছু 💯 | Ashik",
+      "💘 Putul তোমার নাম শুনলেই হাসি আসে 😍 | Ashik",
+      "🌹 Putul তুমি আমার হৃদয়ের রাজকন্যা 👑 | Ashik",
+      "💕 Putul তুমি আমার অনুভূতির নাম 💓 | Ashik",
+      "💓 Putul তুমি আমার হার্টবিট ❤️ | Ashik",
+      "💗 Putul তুমি আমার চিরদিনের ভালোবাসা ♾️ | Ashik",
+      "💝 Putul তুমি আমার পৃথিবীর সবচেয়ে সুন্দর মানুষ 🌍 | Ashik",
+
+      "💖 Putul তোমাকে দেখলেই সব টেনশন চলে যায় 😊 | Ashik",
+      "🌸 Putul তুমি আমার মনের রাজকুমারী 👑 | Ashik",
+      "❤️ Putul তুমি আমার প্রতিটি শ্বাসে আছো 😌 | Ashik",
+      "💞 Putul তুমি আমার জীবনের সেরা উপহার 🎁 | Ashik",
+      "💘 Putul তুমি আমার দুঃখের ওষুধ 💊 | Ashik",
+      "🌹 Putul তুমি আমার ভালো থাকার কারণ 😊 | Ashik",
+      "💕 Putul তুমি আমার স্বপ্নের মানুষ 🌙 | Ashik",
+      "💓 Putul তুমি আমার মনের শান্তি 🕊️ | Ashik",
+      "💗 Putul তুমি আমার হাসির উৎস 😄 | Ashik",
+      "💝 Putul তুমি আমার ভালোবাসার ঠিকানা 🏡 | Ashik",
+
+      "💖 Putul তুমি আমার সকাল আর রাত 🌞🌙 | Ashik",
+      "🌸 Putul তুমি আমার জীবনের আলো 💡 | Ashik",
+      "❤️ Putul তুমি আমার জীবনের রঙ 🎨 | Ashik",
+      "💞 Putul তুমি আমার প্রতিটি ভাবনা 💭 | Ashik",
+      "💘 Putul তুমি আমার হৃদয়ের রাজ্য 👑 | Ashik",
+      "🌹 Putul তুমি আমার ভালোবাসার গল্প 📖 | Ashik",
+      "💕 Putul তুমি আমার স্বপ্নের ঠিকানা 🏡 | Ashik",
+      "💓 Putul তুমি আমার অনুভূতির কেন্দ্র 💕 | Ashik",
+      "💗 Putul তুমি আমার চিরস্থায়ী ভালোবাসা ♾️ | Ashik",
+      "💝 Putul তুমি আমার সব স্বপ্ন পূরণ 🌈 | Ashik",
+
+      "💖 Putul তুমি আমার চাঁদের আলো 🌙 | Ashik",
+      "🌸 Putul তুমি আমার সূর্যের আলো ☀️ | Ashik",
+      "❤️ Putul তুমি আমার জীবনের কবিতা ✍️ | Ashik",
+      "💞 Putul তুমি আমার ভালো থাকার reason 😊 | Ashik",
+      "💘 Putul তুমি আমার হৃদয়ের গান 🎶 | Ashik",
+      "🌹 Putul তুমি আমার পৃথিবীর সবচেয়ে মিষ্টি মানুষ 🍭 | Ashik",
+      "💕 Putul তুমি আমার মনের ভিতরের মানুষ 🥰 | Ashik",
+      "💓 Putul তুমি আমার জীবনের সবচেয়ে সুন্দর অধ্যায় 📘 | Ashik",
+      "💗 Putul তুমি আমার স্বপ্নের রানী 👑 | Ashik",
+      "💝 Putul তুমি আমার ভালোবাসার নাম ❤️ | Ashik"
+
+    ];
+
+    const msg = lines[Math.floor(Math.random() * lines.length)];
+
+    return message.reply(
+`╭──── 💖 PUTUL 💖 ────╮
+
+${msg}
+
+╰────────────────────╯`
+    );
+  }
 };
