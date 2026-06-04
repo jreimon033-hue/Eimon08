@@ -1,92 +1,97 @@
 const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
 
-module.exports.config = {
-  name: "searchimg",
-  version: "1.0",
-  hasPermssion: 0,
-  credits: "ashik",
-  description: "Search 6 images from Pexels",
-  commandCategory: "media",
-  usages: "/searchimg <query>",
-  cooldowns: 5
-};
-
-module.exports.run = async function ({ api, event, args }) {
-  const query = args.join(" ");
-
-  if (!query) {
-    return api.sendMessage(
-      "🖼️ | Usage: /searchimg <query>",
-      event.threadID,
-      event.messageID
-    );
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr;
+}
 
-  const API_KEY = "xbqnRtIRv2s5IcTSrC493fmgszwfa5cEOc3dowZjLfG1eueAkm14cNXZ";
+module.exports = {
+  config: {
+    name: "searchimg",
+    version: "4.0",
+    author: "ashik",
+    countDown: 5,
+    role: 0,
+    description: "Bing HD image search with shuffle mode",
+    category: "image",
+    guide: {
+      en: "{pn} <query>"
+    }
+  },
 
-  try {
-    const res = await axios.get(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6`,
-      {
-        headers: {
-          Authorization: API_KEY
-        }
-      }
-    );
+  onStart: async function ({ message, args }) {
 
-    if (!res.data.photos || res.data.photos.length === 0) {
-      return api.sendMessage(
-        `❌ | No images found for: ${query}`,
-        event.threadID,
-        event.messageID
+    if (!args.length) {
+      return message.reply(
+`╭──── IMAGE SEARCH ────╮
+
+Usage:
+/searchimg cat
+/searchimg anime girl
+/searchimg freefire
+
+╰────────────────────╯`
       );
     }
 
-    const attachments = [];
+    const query = encodeURIComponent(args.join(" "));
 
-    for (let i = 0; i < Math.min(6, res.data.photos.length); i++) {
-      const imgUrl = res.data.photos[i].src.large;
-      const imgPath = path.join(__dirname, `cache_searchimg_${i}.jpg`);
+    try {
 
-      const img = await axios({
-        url: imgUrl,
-        method: "GET",
-        responseType: "stream"
-      });
+      const url = `https://www.bing.com/images/search?q=${query}`;
 
-      await new Promise((resolve, reject) => {
-        const writer = fs.createWriteStream(imgPath);
-        img.data.pipe(writer);
-        writer.on("finish", resolve);
-        writer.on("error", reject);
-      });
-
-      attachments.push(fs.createReadStream(imgPath));
-    }
-
-    api.sendMessage(
-      {
-        body: `🔎 Results for: ${query}\n🖼️ Found ${attachments.length} images`,
-        attachment: attachments
-      },
-      event.threadID,
-      () => {
-        for (let i = 0; i < attachments.length; i++) {
-          const imgPath = path.join(__dirname, `cache_searchimg_${i}.jpg`);
-          if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+      const res = await axios.get(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0"
         }
-      },
-      event.messageID
-    );
+      });
 
-  } catch (err) {
-    console.error(err);
-    api.sendMessage(
-      "❌ | Failed to fetch images. Check your Pexels API key.",
-      event.threadID,
-      event.messageID
-    );
+      const html = res.data;
+
+      const regex = /murl&quot;:&quot;(https:\/\/[^&]+)&quot;/g;
+
+      let images = [];
+      let match;
+
+      while ((match = regex.exec(html)) !== null) {
+        images.push(match[1]);
+      }
+
+      if (!images.length) {
+        return message.reply("❌ No images found!");
+      }
+
+      // 🔥 shuffle mode
+      images = shuffleArray(images);
+
+      images = images.slice(0, 6);
+
+      let msg = `╭──── SHUFFLE RESULTS ────╮\n🔎 ${args.join(" ")}\n💡 Save any image you like\n╰────────────────────────╯`;
+
+      // 👉 send images ONE BY ONE (save friendly)
+      for (let i = 0; i < images.length; i++) {
+        try {
+          const img = await axios.get(images[i], {
+            responseType: "arraybuffer",
+            timeout: 10000
+          });
+
+          await message.reply({
+            body: `🖼️ Image ${i + 1}`,
+            attachment: img.data
+          });
+
+        } catch (e) {}
+      }
+
+      return;
+
+    } catch (err) {
+      console.log(err);
+      return message.reply("❌ Error fetching images!");
+    }
   }
 };
