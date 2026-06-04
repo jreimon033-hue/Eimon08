@@ -13,7 +13,7 @@ module.exports = {
 		version: "1.0",
 		author: "ashik",
 		countDown: 10,
-		role: 0,
+		role: 2,
 		shortDescription: "Pair with mentioned user",
 		longDescription: "Generate couple image with mentioned user",
 		category: "love",
