@@ -1,85 +1,68 @@
-const fs = require("fs-extra");
-const path = require("path");
-
-const banPath = path.join(__dirname, "banlist.json");
-
-if (!fs.existsSync(banPath)) {
-	fs.writeFileSync(banPath, JSON.stringify({}, null, 2));
-}
-
-function getBanList() {
-	return JSON.parse(fs.readFileSync(banPath));
-}
-
-function saveBanList(data) {
-	fs.writeFileSync(banPath, JSON.stringify(data, null, 2));
-}
-
 module.exports = {
-	config: {
-		name: "ban",
-		version: "1.0",
-		author: "ashik",
-		role: 2,
-		category: "admin",
-		description: "Ban system"
-	},
+  config: {
+    name: "ban",
+    version: "1.0",
+    author: "ashik",
+    role: 2,
+    category: "admin"
+  },
 
-	onStart: async function ({ api, event, args, message }) {
+  onStart: async function ({ event, message, args }) {
 
-		const type = args[0];
+    if (!global.banUsers) global.banUsers = new Set();
 
-		let mentions = Object.keys(event.mentions || {});
-		let data = getBanList();
+    const type = (args[0] || "").toLowerCase();
 
-		// BAN USER
-		if (type === "add" || type === "ban") {
+    // ---------------- BAN ADD ----------------
+    if (type === "add" || type === "ban") {
 
-			if (!mentions.length)
-				return message.reply("❌ Mention someone to ban");
+      const uid = Object.keys(event.mentions || {})[0];
 
-			const uid = mentions[0];
+      if (!uid)
+        return message.reply("❌ Please mention a user to ban");
 
-			data[uid] = {
-				name: event.mentions[uid],
-				time: Date.now()
-			};
+      global.banUsers.add(uid);
 
-			saveBanList(data);
+      return message.reply(`🚫 User BANNED\nUID: ${uid}`);
+    }
 
-			return message.reply(`🚫 User banned successfully`);
-		}
+    // ---------------- UNBAN ----------------
+    if (type === "remove" || type === "unban") {
 
-		// UNBAN USER
-		if (type === "remove" || type === "unban") {
+      const uid = Object.keys(event.mentions || {})[0];
 
-			if (!mentions.length)
-				return message.reply("❌ Mention someone to unban");
+      if (!uid)
+        return message.reply("❌ Please mention a user to unban");
 
-			const uid = mentions[0];
+      global.banUsers.delete(uid);
 
-			delete data[uid];
+      return message.reply(`✅ User UNBANNED\nUID: ${uid}`);
+    }
 
-			saveBanList(data);
+    // ---------------- BAN LIST ----------------
+    if (type === "list") {
 
-			return message.reply(`✅ User unbanned successfully`);
-		}
+      const list = [...global.banUsers];
 
-		// BANLIST
-		if (type === "list" || !type) {
+      if (list.length === 0)
+        return message.reply("✅ No banned users");
 
-			let msg = "🚫 BAN LIST 🚫\n\n";
+      let msg = "🚫 BAN LIST 🚫\n\n";
 
-			const keys = Object.keys(data);
+      list.forEach((u, i) => {
+        msg += `${i + 1}. ${u}\n`;
+      });
 
-			if (!keys.length)
-				return message.reply("✅ No banned users");
+      return message.reply(msg);
+    }
 
-			for (let i = 0; i < keys.length; i++) {
-				msg += `${i + 1}. ${keys[i]}\n`;
-			}
+    // ---------------- HELP ----------------
+    return message.reply(
+`📌 BAN SYSTEM COMMAND
 
-			return message.reply(msg);
-		}
-	}
+/ban add @user
+/ban remove @user
+/ban list`
+    );
+  }
 };
