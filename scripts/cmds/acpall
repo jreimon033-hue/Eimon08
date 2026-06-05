@@ -1,97 +1,84 @@
-const axios = require("axios");
+module.exports.config = {
+  name: "acpall",
+  version: "1.0",
+  hasPermssion: 2,
+  credits: "ashik",
+  description: "Accept all friend requests",
+  commandCategory: "system",
+  usages: "/acpall",
+  cooldowns: 5
+};
 
-module.exports = {
-config: {
-name: "acpall",
-version: "1.0",
-author: "ashik",
-countDown: 5,
-role: 2,
-shortDescription: {
-en: "Accept all friend requests"
-},
-longDescription: {
-en: "Automatically accept all pending friend requests"
-},
-category: "owner"
-},
+module.exports.onStart = async function ({ api, event, message }) {
+  try {
+    const form = {
+      av: api.getCurrentUserID(),
+      fb_api_req_friendly_name: "FriendingCometFriendRequestsRootQueryRelayPreloader",
+      fb_api_caller_class: "RelayModern",
+      doc_id: "4499164963466303",
+      variables: JSON.stringify({
+        input: { scale: 3 }
+      })
+    };
 
-onStart: async function ({ api, event, message }) {
-	try {
-		const form = {
-			av: api.getCurrentUserID(),
-			fb_api_req_friendly_name: "FriendingCometFriendRequestsRootQueryRelayPreloader",
-			fb_api_caller_class: "RelayModern",
-			doc_id: "4499164963466303",
-			variables: JSON.stringify({
-				input: {
-					scale: 3
-				}
-			})
-		};
+    const response = await api.httpPost(
+      "https://www.facebook.com/api/graphql/",
+      form
+    );
 
-		const res = await api.httpPost(
-			"https://www.facebook.com/api/graphql/",
-			form
-		);
+    const data = JSON.parse(response);
 
-		const requests =
-			JSON.parse(res)?.data?.viewer?.friending_possibilities?.edges || [];
+    const list =
+      data?.data?.viewer?.friending_possibilities?.edges || [];
 
-		if (requests.length === 0) {
-			return message.reply("✅ No pending friend requests found.");
-		}
+    if (!list.length) {
+      return message.reply("✅ No pending friend requests found.");
+    }
 
-		let accepted = 0;
-		let failed = 0;
+    let ok = 0;
+    let fail = 0;
 
-		for (const user of requests) {
-			try {
-				const acceptForm = {
-					av: api.getCurrentUserID(),
-					fb_api_req_friendly_name:
-						"FriendingCometFriendRequestConfirmMutation",
-					fb_api_caller_class: "RelayModern",
-					doc_id: "3147613905362928",
-					variables: JSON.stringify({
-						input: {
-							source: "friends_tab",
-							actor_id: api.getCurrentUserID(),
-							friend_requester_id: user.node.id,
-							client_mutation_id: Math.random()
-								.toString(36)
-								.substring(2, 15)
-						},
-						scale: 3,
-						refresh_num: 0
-					})
-				};
+    for (const user of list) {
+      try {
+        const acceptForm = {
+          av: api.getCurrentUserID(),
+          fb_api_req_friendly_name:
+            "FriendingCometFriendRequestConfirmMutation",
+          fb_api_caller_class: "RelayModern",
+          doc_id: "3147613905362928",
+          variables: JSON.stringify({
+            input: {
+              source: "friends_tab",
+              actor_id: api.getCurrentUserID(),
+              friend_requester_id: user.node.id,
+              client_mutation_id: Math.random().toString(36).slice(2)
+            },
+            scale: 3,
+            refresh_num: 0
+          })
+        };
 
-				const result = await api.httpPost(
-					"https://www.facebook.com/api/graphql/",
-					acceptForm
-				);
+        const res = await api.httpPost(
+          "https://www.facebook.com/api/graphql/",
+          acceptForm
+        );
 
-				const data = JSON.parse(result);
+        const r = JSON.parse(res);
 
-				if (data.errors)
-					failed++;
-				else
-					accepted++;
+        if (r.errors) fail++;
+        else ok++;
 
-			} catch (e) {
-				failed++;
-			}
-		}
+      } catch (e) {
+        fail++;
+      }
+    }
 
-		return message.reply(
-			`✅ Accepted: ${accepted}\n❌ Failed: ${failed}`
-		);
+    return message.reply(
+      `✅ Accepted: ${ok}\n❌ Failed: ${fail}`
+    );
 
-	} catch (err) {
-		console.log(err);
-		return message.reply("❌ Failed to fetch friend requests.");
-	}
-}
-
+  } catch (err) {
+    console.log(err);
+    return message.reply("❌ Error fetching friend requests.");
+  }
 };
