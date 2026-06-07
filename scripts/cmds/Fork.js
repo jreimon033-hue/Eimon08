@@ -27,6 +27,8 @@ module.exports = {
 🎥 𝗩𝗜𝗗𝗘𝗢 𝗧𝗨𝗧𝗢𝗥𝗜𝗔𝗟 📺 https://youtu.be/zp61jH98vSQ?si=vbYqOqGOUQye9Qhu
 ━━━━━━━━━━
 𝘁𝗲𝗹𝗲𝗴𝗿𝗮𝗺 𝗰𝗵𝗮𝗻𝗻𝗲𝗹: https://t.me/ashikgod
+
+Massanger group:https://m.me/j/AbZIF6GWRSBTHmQt/?send_source=gc%3Acopy_invite_link_c
 ━━━━━━━━━━
 𝐀𝐒𝐇𝐈𝐊 𝗚𝗢𝗔𝗧 𝗕𝗢𝗧 𝗩𝟮
 ✦━━━━━━━━━✦
