@@ -1,7 +1,7 @@
 >   ✰EIMON♡𝙜𝙤𝙙☆𝘾𝙃𝘼𝙏☆𝘽𝙊𝙏✰𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟✰🌐</h1>
 <!-- Github README -->
 
-<p align="center"><img src="https://img.shields.io/badge/I Am ASHIK from %20BANGLADESHI- NOOB PROGRAMMER-green?colorA=%23ff0000&colorB=%23017e40&style=flat-square">
+<p align="center"><img src="https://img.shields.io/badge/I Am EIMON from %20BANGLADESHI- NOOB PROGRAMMER-green?colorA=%23ff0000&colorB=%23017e40&style=flat-square">
 
 </i></b></h3>
 <h3 align="center">
