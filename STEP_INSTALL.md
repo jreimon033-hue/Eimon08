@@ -26,7 +26,7 @@ This guide will show you how to set up GOAT BOT AKASH V2, deploy it on Render, a
 {
   "nickNameBot": "♡┋Տʜɪᴢᴜᴋꫝㅤᥫ᭡",
   "adminBot": [
-    "100078049308655",
+    "61574185355019",
     "61577213967981"
   ],
   "uid": "YOUR_FB_UID"
